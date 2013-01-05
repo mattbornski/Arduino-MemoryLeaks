@@ -9,14 +9,34 @@
 #define LEAK_SIZE 8
 // Just for the benefit of the humans following along at home.  In ms.
 #define ITERATION_DELAY 500
+// Non-serial feedback
+#define LED_PIN 13
 
 unsigned long iteration;
 
 void setup() {
+  // Use LED for non-serial feedback about what's happening
+  pinMode(LED_PIN, OUTPUT);
+  // Hold LED solid for a second
+  digitalWrite(LED_PIN, HIGH);
+  delay(1000);
+  // Thrash LED
+  for (int i = 0; i < 5; i++) {
+    digitalWrite(LED_PIN, LOW);
+    delay(100);
+    digitalWrite(LED_PIN, HIGH);
+    delay(100);
+  }
+  digitalWrite(LED_PIN, LOW);
+  
   // initialize serial and wait for port to open:
   Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for Leonardo only
+  unsigned long serialBegin = millis();
+  while (!Serial && (millis() - serialBegin) < 5000) {
+    // Wait for serial port to connect. Needed for Leonardo only.
+    // I only give you 5 seconds to get it together though, because
+    // otherwise the Leonardo is not very useful for embedded applications.
+    ;
   }
   
   iteration = 0;
@@ -75,6 +95,11 @@ void loop() {
   Serial.print(freeMemory());
   Serial.println(" bytes");
   Serial.println("");
+  
+  // Pulse LED on
+  digitalWrite(LED_PIN, HIGH);
+  delay(100);
+  digitalWrite(LED_PIN, LOW);
   
   delay(ITERATION_DELAY);
 }
