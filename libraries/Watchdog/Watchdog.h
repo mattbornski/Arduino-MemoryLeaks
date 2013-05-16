@@ -22,7 +22,11 @@ void softReset();
 extern int __watchdog_bytes;
 void softResetMem(int bytes);
 // Reset if we go more than 8 seconds without a heartbeat
+extern int __watchdog_timeout_ms;
 void softResetTimeout();
+// Reset using external watchdog circuit on pin <pin>
+extern int __watchdog_pin;
+void hardResetPin(int pin);
 
 void heartbeat();
 
